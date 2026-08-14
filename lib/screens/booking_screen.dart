@@ -27,11 +27,18 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _busy = false;
   List<ServiceItem> _services = [];
   String _pickupAddr = '14 Admiralty Way, Lekki Phase 1, Lagos';
+  double _balance = 0;
 
   @override
   void initState() {
     super.initState();
     _loadServices();
+    _loadBalance();
+  }
+
+  Future<void> _loadBalance() async {
+    final b = await SupabaseService().getWalletBalance();
+    if (mounted) setState(() => _balance = b);
   }
 
   Future<void> _loadServices() async {

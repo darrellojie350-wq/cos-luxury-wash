@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                CosAnimate.fadeInUp(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                CosAnimate.fadeInUp(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text('Hello, $_name', style: AppText.display(26)),
                   const SizedBox(height: 4), Row(children: [const Icon(Icons.location_on_outlined, color: AppColors.muted, size: 16), const SizedBox(width: 4), const Text('Lagos, Nigeria', style: TextStyle(color: AppColors.ink2))]),
                 ])),

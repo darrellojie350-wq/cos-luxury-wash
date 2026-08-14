@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models.dart';
-import '../models/address.dart';
 
 class AppConfig {
   // Inject at build time: flutter build web --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_KEY=...
@@ -18,7 +17,7 @@ class SupabaseService {
   }
 
   Future<AuthResponse> signInEmail(String email, String password) =>
-      client.auth.signInPassword(email: email, password: password);
+      client.auth.signInWithPassword(email: email, password: password);
 
   Future<AuthResponse> signUpEmail(String email, String password, {String? fullName, String? phone}) =>
       client.auth.signUp(email: email, password: password, data: {

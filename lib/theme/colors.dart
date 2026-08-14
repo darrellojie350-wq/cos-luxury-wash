@@ -19,7 +19,5 @@ class AppColors {
   static const Color rideGreen = Color(0xFF2E7D5B);
 }
 
-class AppText {
-  static const display = 'Fraunces';   // serif for headlines/luxury
-  static const body = 'Inter';          // clean grotesk body
-}
+<longcat_arg_value>
+

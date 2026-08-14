@@ -4,9 +4,9 @@ import '../theme/colors.dart';
 import '../theme/theme.dart';
 
 class CosAnimate {
-  static fadeInUp(Widget child, {int delay = 0}) =>
+  static fadeInUp({required Widget child, int delay = 0}) =>
       child.animate().fadeIn(duration: 450.ms, delay: delay.ms).moveY(begin: 16, end: 0, duration: 450.ms, delay: delay.ms, curve: Curves.easeOutCubic);
-  static scaleIn(Widget child, {int delay = 0}) =>
+  static scaleIn({required Widget child, int delay = 0}) =>
       child.animate().scale(duration: 400.ms, delay: delay.ms, curve: Curves.easeOutBack);
 }
 

@@ -3,8 +3,9 @@ import '../models/models.dart';
 import '../models/address.dart';
 
 class AppConfig {
-  static const supabaseUrl = 'https://YOUR-PROJECT.supabase.co';
-  static const supabaseAnonKey = 'sbp_d5adf07e0fac4e7d0de6cdfb05b9e6cc54052e58';
+  // Inject at build time: flutter build web --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_KEY=...
+  static const supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: 'https://YOUR-PROJECT.supabase.co');
+  static const supabaseAnonKey = String.fromEnvironment('SUPABASE_KEY', defaultValue: 'YOUR-ANON-KEY');
 }
 
 class SupabaseService {

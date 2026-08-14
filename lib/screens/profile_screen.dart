@@ -1,60 +1,348 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/colors.dart';
-import '../theme/theme.dart';
-import '../services/supabase_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../services/supabase_service.dart';
+import '../theme/colors.dart';
+import '../widgets/common.dart';
+
+/// CO's Luxury Wash — Profile.
+/// Premium dark-luxury account screen: gold-ring avatar header, staggered
+/// menu list with gold chevrons, and a destructive log-out action.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _name = '', _email = '', _phone = '';
+  Map<String, dynamic>? _profile;
+  bool _loading = true;
+  bool _signingOut = false;
 
   @override
-  void initState() { super.initState(); _load(); }
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
 
-  Future<void> _load() async {
-    final p = await SupabaseService().getProfile();
-    if (mounted) setState(() { _name = p?['full_name'] ?? 'User'; _email = p?['email'] ?? ''; _phone = p?['phone'] ?? ''; });
+  Future<void> _loadProfile() async {
+    final p = await SupabaseService.getProfile();
+    if (!mounted) return;
+    setState(() {
+      _profile = p;
+      _loading = false;
+    });
+  }
+
+  Future<void> _signOut() async {
+    setState(() => _signingOut = true);
+    await SupabaseService.signOut();
+    if (!mounted) return;
+    context.go('/auth');
+  }
+
+  String get _name => (_profile?['full_name'] ?? '').toString().isEmpty
+      ? 'Guest'
+      : _profile!['full_name'];
+  String get _email => (_profile?['email'] ?? '').toString();
+  String get _avatarUrl => (_profile?['avatar_url'] ?? '').toString();
+
+  String get _initials {
+    final parts = _name.trim().split(RegExp(r'\s+'));
+    if (parts.length >= 2 && parts.last.isNotEmpty) {
+      return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+    }
+    return _name.isNotEmpty ? _name[0].toUpperCase() : 'C';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Profile', style: AppText.display(22, AppColors.ink))),
-      body: ListView(padding: const EdgeInsets.all(20), children: [
-        const SizedBox(height: 8),
-        Column(children: [
-          Container(width: 84, height: 84, decoration: BoxDecoration(shape: BoxShape.circle, gradient: const LinearGradient(colors: [AppColors.gold, AppColors.goldDeep]), boxShadow: [BoxShadow(color: AppColors.goldGlow, blurRadius: 18, spreadRadius: 3)]), child: const Center(child: Text('C', style: {FontWeight: FontWeight.w700, FontSize: 34, Color: Color(0xFF1A1407)} as TextStyle))),
-          const SizedBox(height: 14), Text(_name, style: AppText.display(20)), const SizedBox(height: 2), Text(_email, style: const TextStyle(color: AppColors.ink2, fontSize: 13)),
-        ]),
-        const SizedBox(height: 28),
-        ..._rows(),
-        const SizedBox(height: 22),
-        GestureDetector(
-          onTap: () async { await SupabaseService().signOut(); if (mounted) context.go('/auth'); },
-          child: Container(height: 54, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.hairline)), child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.logout_rounded, color: AppColors.danger, size: 20), SizedBox(width: 8), Text('Log Out', style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.w600))])),
+      backgroundColor: AppColors.base,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          children: [
+            const SizedBox(height: 8),
+            _sectionLabel('ACCOUNT'),
+            const SizedBox(height: 14),
+            _buildHeader(),
+            const SizedBox(height: 28),
+            _buildMenu(),
+            const SizedBox(height: 32),
+            _buildLogout(),
+            const SizedBox(height: 18),
+          ],
         ),
-      ]),
+      ),
     );
   }
 
-  List<Widget> _rows() {
-    final items = [
-      ('Addresses', Icons.location_on_outlined, () {}),
-      ('My Orders', Icons.receipt_long_rounded, () => context.go('/orders')),
-      ('Payment Methods', Icons.credit_card_rounded, () {}),
-      ('Wallet', Icons.account_balance_wallet_rounded, () => context.go('/wallet')),
-      ('Notifications', Icons.notifications_none_rounded, () {}),
-      ('Help & Support', Icons.help_outline_rounded, () {}),
-      ('Settings', Icons.settings_outlined, () {}),
-    ];
-    return items.asMap().entries.map((e) {
-      final x = e.value;
-      return Padding(padding: const EdgeInsets.only(bottom: 10), child: GestureDetector(onTap: x.$3, child: Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15), decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.hairline)), child: Row(children: [Icon(x.$2, color: AppColors.gold, size: 21), const SizedBox(width: 14), Expanded(child: Text(x.$1, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: AppColors.ink))), const Icon(Icons.chevron_right_rounded, color: AppColors.muted, size: 21)]))));
-    }).toList();
+  Widget _sectionLabel(String text) {
+    return Text(
+      text,
+      style: GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 2.4,
+        color: AppColors.muted,
+      ),
+    );
   }
+
+  Widget _buildHeader() {
+    if (_loading) return _headerSkeleton();
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.hairline),
+      ),
+      child: Row(
+        children: [
+          _buildAvatar(),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _name,
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.ink,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _email.isEmpty ? 'No email on file' : _email,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: AppColors.ink2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceHi,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.hairline),
+            ),
+            child: const Icon(Icons.edit_outlined, size: 16, color: AppColors.muted),
+          ),
+        ],
+      ),
+    )
+        .animate()
+        .fadeIn(duration: 400.ms)
+        .moveY(begin: 18, end: 0, duration: 400.ms, curve: Curves.easeOutCubic);
+  }
+
+  Widget _buildAvatar() {
+    final hasImage = _avatarUrl.isNotEmpty;
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          colors: [AppColors.gold, AppColors.goldDeep],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: const [
+          BoxShadow(color: AppColors.goldGlow, blurRadius: 16, spreadRadius: 1),
+        ],
+      ),
+      child: CircleAvatar(
+        radius: 30,
+        backgroundColor: AppColors.surfaceHi,
+        backgroundImage: hasImage ? NetworkImage(_avatarUrl) : null,
+        onBackgroundImageError: hasImage
+            ? (_, __) {
+                setState(() => _profile?['avatar_url'] = null);
+              }
+            : null,
+        child: hasImage
+            ? null
+            : Text(
+                _initials,
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.gold,
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _headerSkeleton() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.hairline),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(radius: 33, backgroundColor: AppColors.surfaceHi),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(width: 140, height: 18, color: AppColors.surfaceHi),
+                const SizedBox(height: 10),
+                Container(width: 90, height: 12, color: AppColors.surfaceHi),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenu() {
+    final items = <_MenuItem>[
+      _MenuItem(Icons.location_on_outlined, 'Addresses', route: null),
+      _MenuItem(Icons.receipt_long_outlined, 'My Orders', route: '/orders'),
+      _MenuItem(Icons.credit_card_outlined, 'Payment Methods', route: null),
+      _MenuItem(Icons.account_balance_wallet_outlined, 'Wallet', route: '/wallet'),
+      _MenuItem(Icons.notifications_outlined, 'Notifications', route: null),
+      _MenuItem(Icons.help_outline, 'Help & Support', route: null),
+      _MenuItem(Icons.settings_outlined, 'Settings', route: null),
+    ];
+
+    return CosCard(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        children: [
+          for (var i = 0; i < items.length; i++) ...[
+            CosAnimate.fadeInUp(
+              child: _menuRow(items[i]),
+              delay: Duration(milliseconds: 70 * i),
+            ),
+            if (i != items.length - 1)
+              Divider(height: 1, thickness: 1, color: AppColors.hairline, indent: 64),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _menuRow(_MenuItem item) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _onMenuTap(item),
+        splashColor: AppColors.goldGlow,
+        highlightColor: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceHi,
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(item.icon, size: 19, color: AppColors.ink2),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.ink,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right, size: 22, color: AppColors.gold),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onMenuTap(_MenuItem item) {
+    final route = item.route;
+    if (route != null) {
+      context.go(route);
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.surfaceHi,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          content: Text(
+            '${item.label} — coming soon',
+            style: GoogleFonts.inter(fontSize: 13, color: AppColors.ink2),
+          ),
+        ),
+      );
+  }
+
+  Widget _buildLogout() {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: OutlinedButton(
+        onPressed: _signingOut ? null : _signOut,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: AppColors.danger, width: 1.4),
+          foregroundColor: AppColors.danger,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        child: _signingOut
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.danger,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.logout_outlined, size: 19),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Log Out',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: 520.ms).moveY(begin: 16, end: 0);
+  }
+}
+
+class _MenuItem {
+  final IconData icon;
+  final String label;
+  final String? route;
+  const _MenuItem(this.icon, this.label, {this.route});
 }

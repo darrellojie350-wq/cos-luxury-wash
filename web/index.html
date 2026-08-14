@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="CO's Luxury Wash — premium laundry & dry cleaning, delivered to your door.">
+  <meta name="theme-color" content="#0E1116">
+  <title>CO's Luxury Wash</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    body { margin: 0; background: #0E1116; }
+    .boot { position: fixed; inset: 0; display: grid; place-items: center; }
+    .boot-mark { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg,#C9A45C,#B8923F); display: grid; place-items: center; animation: pulse 1.2s ease-in-out infinite; }
+    .boot-mark svg { width: 30px; height: 30px; }
+    @keyframes pulse { 0%,100%{ transform: scale(1); opacity: 1;} 50%{ transform: scale(1.08); opacity: .85;} }
+  </style>
+</head>
+<body>
+  <div class="boot" id="boot">
+    <div class="boot-mark">
+      <svg viewBox="0 0 32 32" fill="none"><path d="M6 8h20l-2 18H8L6 8z" stroke="#1A1407" stroke-width="2" stroke-linejoin="round"/><path d="M11 8V6a2 2 0 012-2h6a2 2 0 012 2v2" stroke="#1A1407" stroke-width="2"/><circle cx="16" cy="17" r="4" stroke="#1A1407" stroke-width="2"/></svg>
+    </div>
+  </div>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

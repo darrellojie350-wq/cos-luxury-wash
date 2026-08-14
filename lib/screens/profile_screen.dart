@@ -28,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: ListView(padding: const EdgeInsets.all(20), children: [
         const SizedBox(height: 8),
         Column(children: [
-          Container(width: 84, height: 84, decoration: BoxDecoration(shape: BoxShape.circle, gradient: const LinearGradient(colors: [AppColors.gold, AppColors.goldDeep]), boxShadow: [BoxShadow(color: AppColors.goldGlow, blurRadius: 18, spreadRadius: 3)]), child: const Center(child: Text('C', style: {FontWeight: FontWeight.w700, FontSize: 34, Color: Color(0xFF1A1407)} as TextStyle))),
+          Container(width: 84, height: 84, decoration: BoxDecoration(shape: BoxShape.circle, gradient: const LinearGradient(colors: [AppColors.gold, AppColors.goldDeep]), boxShadow: [BoxShadow(color: AppColors.goldGlow, blurRadius: 18, spreadRadius: 3)]), child: const Center(child: Text('C', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 34, color: Color(0xFF1A1407))))),
           const SizedBox(height: 14), Text(_name, style: AppText.display(20)), const SizedBox(height: 2), Text(_email, style: const TextStyle(color: AppColors.ink2, fontSize: 13)),
         ]),
         const SizedBox(height: 28),

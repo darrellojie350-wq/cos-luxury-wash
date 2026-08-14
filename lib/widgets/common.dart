@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/colors.dart';
 import '../theme/theme.dart';
+import '../models/models.dart';
 
 class CosAnimate {
   static fadeInUp({required Widget child, int delay = 0}) =>
       child.animate().fadeIn(duration: 450.ms, delay: delay.ms).moveY(begin: 16, end: 0, duration: 450.ms, delay: delay.ms, curve: Curves.easeOutCubic);
-  static scaleIn({required Widget child, int delay = 0}) =>
+  static scaleIn(Widget child, {int delay = 0}) =>
       child.animate().scale(duration: 400.ms, delay: delay.ms, curve: Curves.easeOutBack);
 }
 

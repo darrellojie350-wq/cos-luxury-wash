@@ -1,0 +1,1 @@
+ /home/ultra/cos-luxury-wash/.dart_tool/flutter_build/094ce0a0a27325a32c58c00629b5465a/build_hooks_result.json:  /home/ultra/cos-luxury-wash/.dart_tool/package_config.json /home/ultra/cos-luxury-wash/pubspec.yaml /home/ultra/flutter/bin/cache/dart-sdk/version

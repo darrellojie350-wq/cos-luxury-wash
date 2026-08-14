@@ -1,0 +1,1 @@
+ /home/ultra/cos-luxury-wash/build/web/favicon.svg:  /home/ultra/cos-luxury-wash/web/index.html /home/ultra/cos-luxury-wash/web/favicon.svg

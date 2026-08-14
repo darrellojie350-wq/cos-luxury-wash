@@ -31,3 +31,9 @@ class AppTheme {
   static TextStyle display([double size = 28, Color? color]) => GoogleFonts.playfairDisplay(fontSize: size, fontWeight: FontWeight.w600, color: color ?? AppColors.ink, letterSpacing: -0.02);
   static TextStyle monoNum([double size = 15]) => TextStyle(fontFamily: 'monospace', fontSize: size, fontFeatures: const [FontFeature.tabularFigures()], color: AppColors.ink);
 }
+
+/// Convenience alias so screens can call AppText.display() / AppText.monoNum().
+class AppText {
+  static TextStyle display([double size = 28, Color? color]) => AppTheme.display(size, color);
+  static TextStyle monoNum([double size = 15]) => AppTheme.monoNum(size);
+}

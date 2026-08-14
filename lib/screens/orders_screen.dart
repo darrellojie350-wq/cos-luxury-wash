@@ -40,7 +40,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppText.display(22, AppColors.ink),
+        title: Text('Orders', style: AppText.display(22, AppColors.ink)),
         actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ink2), onPressed: _load)],
       ),
       body: Column(children: [

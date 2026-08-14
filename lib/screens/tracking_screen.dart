@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../theme/colors.dart';
 import '../theme/theme.dart';
 import '../services/supabase_service.dart';
@@ -98,7 +99,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   Widget _timelineRow(String status, bool done, bool current, List history) {
     final ts = history.isNotEmpty ? (history.first['created_at'] ?? '').toString().substring(11, 16) : '';
-    return IntrinsicHeight(child: Row(crossAxisAlignment: Alignment.center, children: [
+    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Column(children: [
         Container(width: 22, height: 22, decoration: BoxDecoration(shape: BoxShape.circle, color: done ? AppColors.gold : Colors.transparent, border: Border.all(color: done ? AppColors.gold : AppColors.muted, width: 2.5)), child: done ? const Icon(Icons.check_rounded, size: 13, color: Color(0xFF1A1407)) : null),
         if (status != 'delivered') Expanded(child: Container(width: 2, color: done ? AppColors.gold : AppColors.surfaceHi)),

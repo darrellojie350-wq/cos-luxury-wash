@@ -18,6 +18,3 @@ class AppColors {
   static const Color danger = Color(0xFFE5564B);
   static const Color rideGreen = Color(0xFF2E7D5B);
 }
-
-<longcat_arg_value>
-

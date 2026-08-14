@@ -123,7 +123,7 @@ class _BookingScreenState extends State<BookingScreen> {
         _stepper(),
         Expanded(
           child: AnimatedSwitcher(
-            duration: 300,
+            duration: const Duration(milliseconds: 300),
             child: [
               _serviceStep(),
               _pickupStep(),
@@ -176,7 +176,7 @@ class _BookingScreenState extends State<BookingScreen> {
             child: GestureDetector(
               onTap: () => setState(() => _service = s),
               child: AnimatedContainer(
-                duration: 250,
+                duration: const Duration(milliseconds: 250),
                 curve: Curves.easeOut,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
